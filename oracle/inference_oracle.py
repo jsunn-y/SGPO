@@ -52,6 +52,9 @@ def inference_oracle(split, protein, model_path, impose_penalty=True):
                     elif protein == "TrpB":
                         cutoff = 233 #shouldn't occur
                         rate = 0.99
+                    elif protein == "GB1":
+                        cutoff = 33 
+                        rate = 0.99
                     #get the hamming distances between the sequences and the full sequence
                     hamming_distances = [hamming_distance(full_seq, seq) for seq in sequences]
                     #print(predictions)

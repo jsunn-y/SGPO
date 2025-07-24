@@ -72,7 +72,7 @@ class OracleModel(nn.Module):
 
 LEARNING_RATE = 1e-6
 BATCH_SIZE = 128
-EPOCHS = 1000 #2000 in the original paper, needs this many to learn something meaningful, use fewer for TrpB which has 20 times more data
+EPOCHS = 50 #2000 in the original paper, needs this many to learn something meaningful, use 1000 for TrpB which has 20 times more data, use even fewer (50) for GB1
 DROPOUT = 0.1
 PATIENCE = 400
 HIDDEN_DIM = 400
@@ -80,13 +80,13 @@ ACTIVATION = 'ReLU'
 OPTIMIZER = 'Adam'
 LOSS_FN = 'MSE'  # Mean Squared Error
 EMBEDDING_TYPE = 'One-Hot'  # You would need to preprocess your data accordingly
-N_ENSEMBLE = 20
+N_ENSEMBLE = 10
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 criterion = nn.MSELoss()
 
 
 if __name__ == "__main__":
-    protein = "TrpB" #CreiLOV
+    protein = "GB1" #"TrpB" #CreiLOV
     # Prepare data loaders
     # Could also consider bootstrap ensembling instead of training on the same data
     train_dataset = OracleDataset(protein=protein, split="train")
@@ -146,7 +146,7 @@ if __name__ == "__main__":
                     break
 
             # Logging
-            if epoch % 20 == 0 or epoch == EPOCHS - 1:
+            if epoch % 10 == 0 or epoch == EPOCHS - 1:
                 #print(f"Epoch [{epoch + 1}/{EPOCHS}], Loss: {avg_loss:.4f}")
 
                 # Validation
