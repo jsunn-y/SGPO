@@ -16,8 +16,8 @@ from dataset.protein import ProteinPredictorDataset
 
 device = 'cuda'
 # os.chdir('../')
-proteins = ["TrpB", "CreiLOV"] #use the original ProGen2 model or the finetuned version
-priors = ["random", "target", "continuous", "continuous_ESM", "d3pm", "d3pm_finetune", "mdlm", "udlm", "causalLM_finetune"] 
+proteins = ["GB1"] #["TrpB", "CreiLOV"] #use the original ProGen2 model or the finetuned version
+priors = ["random", "target", "continuous", "d3pm_finetune", "mdlm", "causalLM_finetune"] 
 # priors = ["random", "continuous", "continuous_ESM_head", "d3pm_finetune", "udlm", "mdlm","causalLM_finetune"] # "mdlm_long", "mdlm_short",
 # problems = ["random", "protein_classifier_continuous", "protein_classifier", "protein_classifier", "protein_DPO"]
 tasks = ["unconstrained"] #constrained

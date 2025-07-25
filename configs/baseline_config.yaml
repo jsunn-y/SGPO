@@ -4,10 +4,10 @@ random_init: False
 seed: 42
 n_repeats: 5
 n_rounds: 8
-pretrained_ckpt: d3pm_finetune/TrpB #continuous/TrpB
+pretrained_ckpt: d3pm_finetune/GB1 #continuous/TrpB
 
 defaults:
-  - data: TrpB
+  - data: GB1
   - model: d3pm
   - problem: protein_classifier_discrete
   - algorithm: cls_guidance_discrete

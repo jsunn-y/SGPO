@@ -31,17 +31,17 @@ model:
       _target_: transformers.get_constant_schedule_with_warmup #check if constant warmup is fine
       num_warmup_steps: 2500
     model:
-      _target_: models.MDLM.models.dit.DITClassifier
+      _target_: models.pretraining.model.mdlm.models.dit.DITClassifier
       model_config:
         classifier_model:
-          name: small
+          name: tiny
           type: ddit
-          hidden_size: 768
+          hidden_size: 512
           cond_dim: 128
           #length: ${model.length}  # Same length as diffusion model
           length: 1024 #hardcoded for now
-          n_blocks: 12
-          n_heads: 12
+          n_blocks: 8
+          n_heads: 8
           scale_by_sigma: True
           dropout: 0.1
           # num_classes: ${data.num_classes}

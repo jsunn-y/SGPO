@@ -11,7 +11,7 @@ import transformers
 
 #import dataloader
 #import models.dit
-import models.MDLM.noise_schedule as noise_schedule
+import models.pretraining.model.mdlm.noise_schedule as noise_schedule
 
 
 class MicroAveragingMetric(torchmetrics.Metric):

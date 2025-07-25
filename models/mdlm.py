@@ -14,7 +14,7 @@ from tqdm.auto import tqdm
 # import models.MDLM.models as models
 # import models.MDLM.noise_schedule as noise_schedule
 # import models.MDLM.utils as utils
-from models.pretraining.model.mdlm_diffusion import MDLMDiffusion
+from models.pretraining.model.mdlm_diffusion import MDLMDiffusion, _sample_categorical
 from .base import GenerativeModel
 LOG2 = math.log(2)
 
