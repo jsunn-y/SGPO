@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 for protein in TrpB CreiLOV GB1
 =======
 for protein in GB1 #TrpB CreiLOV
 >>>>>>> 032bd50 (bug fixes and running new analysis for GB1)
+=======
+for protein in GB1 #TrpB CreiLOV
+>>>>>>> 72d9410 (bug fixes and running new analysis for GB1)
 do  
 
     CUDA_VISIBLE_DEVICES=1 python pretrain.py pretrain_model=continuous data=$protein
