@@ -16,9 +16,15 @@ from dataset.protein import ProteinPredictorDataset
 
 device = 'cuda'
 # os.chdir('../')
+<<<<<<< HEAD
 proteins =  ["TrpB", "CreiLOV"] #["GB1"] #use the original ProGen2 model or the finetuned version
 #priors = ["random", "target", "continuous", "d3pm_finetune", "mdlm", "causalLM_finetune"] 
 priors = ["random", "target", "continuous", "continuous_ESM", "d3pm", "d3pm_finetune", "udlm", "mdlm","causalLM_finetune"] # "mdlm_long", "mdlm_short",
+=======
+proteins = ["GB1"] #["TrpB", "CreiLOV"] #use the original ProGen2 model or the finetuned version
+priors = ["random", "target", "continuous", "d3pm_finetune", "mdlm", "causalLM_finetune"] 
+# priors = ["random", "continuous", "continuous_ESM_head", "d3pm_finetune", "udlm", "mdlm","causalLM_finetune"] # "mdlm_long", "mdlm_short",
+>>>>>>> 032bd50 (bug fixes and running new analysis for GB1)
 # problems = ["random", "protein_classifier_continuous", "protein_classifier", "protein_classifier", "protein_DPO"]
 tasks = ["unconstrained"] #constrained
 types = [False] #True #whether to use the finetuned progen model or not
