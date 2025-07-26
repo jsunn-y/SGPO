@@ -1,4 +1,4 @@
-for protein in TrpB CreiLOV
+for protein in GB1 #TrpB CreiLOV
 do  
     #D3PM + CG + Ensemble
     python iterativeBO.py pretrained_ckpt=d3pm_finetune/$protein data=$protein problem=protein_classifier_discrete model=d3pm algorithm=cls_guidance_discrete
@@ -25,7 +25,3 @@ do
     # # CUDA_VISIBLE_DEVICES=1 python iterativeBO.py pretrained_ckpt=mdlm/$protein data=$protein problem=protein_classifier_discrete_GP model=mdlm algorithm=daps
 done
 
-for protein in TrpB CreiLOV
-do  
-    python iterativeBO.py pretrained_ckpt=causalLM_finetune/$protein data=$protein model=causalLM problem=protein_DPO algorithm=DPO 
-done

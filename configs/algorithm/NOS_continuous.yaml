@@ -1,6 +1,11 @@
 name: NOS
 time_conditioned: True
-guidance_params: [1., 10., 100, 200., 500.] #[0.1, 1., 10., 100, 200.] #[0, 0.001, 0.01, 0.1, 1.0]
+guidance_params: [1., 10., 100, 200., 500.] #stability coeffs to iterate through for actual pareto runs
+
+#only used for hyperparameter search
+nos_steps: [5, 10]
+nos_step_sizes: [0.5, 2., 5.]
+nos_stability_coefs: [0.1, 1., 10., 100., 1000.]
 
 method:
   _target_: sampling.NOS.NOS_C

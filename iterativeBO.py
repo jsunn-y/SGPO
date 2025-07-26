@@ -13,6 +13,7 @@ import wandb
 from models.pretraining.collaters import collate_fn_mapping
 from util.seed import set_seed  
 import tqdm
+import copy
 from dataset.protein import ProteinPredictorDataset
 from training.train_GP_classifier import train_classifier, get_thompson_sample
 
@@ -141,7 +142,7 @@ def main(config):
                 # for i in batch_steps:
 
                 #train ensemble of predictor models/finetune models
-                if 'cls_guidance' in config.algorithm.name or 'DAPS' in config.algorithm.name:
+                if 'cls_guidance' in config.algorithm.name or 'DAPS' in config.algorithm.name or 'NOS' in config.algorithm.name:
                     print(f"Training predictor model.")
                     #classifiers = []
                     processes = []
@@ -156,7 +157,27 @@ def main(config):
                     else:
                         for ensemble_idx in range(config.n_ensemble):
                             set_seed(config.seed + round*config.n_ensemble + ensemble_idx)
-                            classifier = instantiate(config.problem.model, data_config=data_config, device=device)
+
+                            if 'NOS' in config.algorithm.name and 'continuous' in config.model.name:
+                                #freeze the transformer weights
+                                for param in net.model.parameters():
+                                    param.requires_grad = False
+
+                                classifier = instantiate(config.problem.model, data_config=data_config, _recursive_=recursive)
+                                algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config)
+                            elif 'NOS' in config.algorithm.name:
+                                pretrained_backbone = copy.deepcopy(net.model.backbone)
+                                # Remove the last layer for the classifier
+                                if hasattr(pretrained_backbone, 'output_layer'):  #DiT
+                                    delattr(pretrained_backbone, 'output_layer')
+                                #freeze backbone for NOS
+                                for param in pretrained_backbone.parameters():
+                                    param.requires_grad = False
+
+                                classifier = instantiate(config.problem.model, tokenizer=net.tokenizer, pretrained_backbone=pretrained_backbone, _recursive_=recursive)
+                            else:
+                                #CG and DAPS
+                                classifier = instantiate(config.problem.model, data_config=data_config, device=device)
                             
                             #Classifier guidance or posterior sampling
                             # classifier = instantiate(config.problem.train_function, classifier, net, dataloader, train_config=config.problem.train, project_fn=algorithm.project)
