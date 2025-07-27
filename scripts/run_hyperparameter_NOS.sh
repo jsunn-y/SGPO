@@ -1,4 +1,4 @@
-for protein in CreiLOV #TrpB, GB1
+for protein in GB1 #TrpB, CreiLOV
 do  
 
     python pareto_NOS_hyperparameter.py pretrained_ckpt=continuous/$protein data=$protein model=continuous problem=protein_NOS_continuous algorithm=NOS_continuous

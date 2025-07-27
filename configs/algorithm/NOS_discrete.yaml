@@ -9,7 +9,7 @@ nos_stability_coefs: [0.1, 1., 10., 100., 1000.]
 
 method:
   _target_: sampling.NOS.NOS
-  num_nos_steps: 5 #10 #5, 10 in the original paper, bigger values don't seem to be affecting things too much
+  num_nos_steps: 10 #10 #5, 10 in the original paper, bigger values don't seem to be affecting things too much
   nos_step_size: 0.5 #0.5 #they used 0.5-2 in the original NOS paper #10 leads to zero, 2 starts leading to zero, 1 slightly above or about the same, 0.1 is slightly helpful
   nos_stability_coef:  0.1 #1000
   n_max_mutations:

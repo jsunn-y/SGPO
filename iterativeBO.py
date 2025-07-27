@@ -72,7 +72,7 @@ def main(config):
             seq_len = data_config.seq_len
             time_conditioned = config.algorithm.time_conditioned if 'time_conditioned' in config.algorithm else True #train classifier on noisy data for most methods, except DAPS
                 
-            if 'cls_guidance' in config.algorithm.name or 'DAPS' in config.algorithm.name:
+            if 'cls_guidance' in config.algorithm.name or 'DAPS' in config.algorithm.name or 'NOS' in config.algorithm.name:
                 net = instantiate(config.model.model, model_name=config.pretrained_ckpt, seq_len=seq_len, device=device, _recursive_=recursive) #load pretrained model
 
                 if 'cls_guidance' in config.algorithm.name:
@@ -83,6 +83,28 @@ def main(config):
                     #classifier = instantiate(config.problem.model, data_config=data_config, device=device)
                     algorithm = instantiate(config.algorithm.method, alpha=0., n_max_mutations=n_max_mutations, net=net, forward_op=None, data_config=data_config) #dummy to get the project_fn, replace later
                     collate_fn = collate_fn_mapping['cls_guidance'](tokenizer=net.tokenizer)
+                elif 'NOS' in config.algorithm.name and 'continuous' in config.model.name:
+                    #freeze the transformer weights
+                    for param in net.model.parameters():
+                        param.requires_grad = False
+
+                    classifier = instantiate(config.problem.model, data_config=data_config, _recursive_=recursive)
+                    algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config)
+                    collate_fn = collate_fn_mapping['cls_guidance'](tokenizer=net.tokenizer)
+                elif 'NOS' in config.algorithm.name:
+                    pretrained_backbone = copy.deepcopy(net.model.backbone)
+                    # Remove the last layer for the classifier
+                    if hasattr(pretrained_backbone, 'output_layer'):  #DiT
+                        delattr(pretrained_backbone, 'output_layer')
+                    #freeze backbone for NOS
+                    for param in pretrained_backbone.parameters():
+                        param.requires_grad = False
+
+                    classifier = instantiate(config.problem.model, tokenizer=net.tokenizer, pretrained_backbone=pretrained_backbone, _recursive_=recursive)
+                    algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config) 
+                    # algorithm = instantiate(config.algorithm.method, nos_stability_coef=0., n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config) #dummy to get the project_fn, replace later
+                    collate_fn = collate_fn_mapping['cls_guidance'](tokenizer=net.tokenizer)
+
             elif 'DPO' in config.algorithm.name:
                 net = instantiate(config.model.model, load_ref_model=True, model_name=config.pretrained_ckpt, seq_len=seq_len, device=device) 
                 #initiate algo once, doesn't need to be changed for DPO
@@ -107,15 +129,17 @@ def main(config):
             summary_df = pd.concat([summary_df, dataset.summary_df], axis=0)
 
             #### Now get ready to sample unconditionally using the ideal guidance parameter found in pareto.py ####
-            if 'cls_guidance' in config.algorithm.name or 'DAPS' in config.algorithm.name:
+            if 'cls_guidance' in config.algorithm.name or 'DAPS' in config.algorithm.name or 'NOS' in config.algorithm.name:
                 #TODO: check to make sure the algorithm is getting updated correctly
                 algorithm = instantiate(config.algorithm.method, n_max_mutations=n_max_mutations, net=net, forward_op=None, data_config=data_config) #dummy to get the project_fn, replace later
                 collate_fn = collate_fn_mapping['cls_guidance'](tokenizer=net.tokenizer)
-                #not sure if this is necessary or helps
+                #not sure if this is necessary, only for saving results
                 if 'cls_guidance' in config.algorithm.name:
                     guidance_param = config.algorithm.method.temperature
                 elif 'DAPS' in config.algorithm.name:
                     guidance_param = config.algorithm.method.alpha
+                elif 'NOS' in config.algorithm.name:
+                    guidance_param = config.algorithm.method.nos_stability_coef
                 
             for round in range(config.num_rounds):
                 #TODO implement better model tracking in wandb and save the models?
@@ -159,20 +183,10 @@ def main(config):
                             set_seed(config.seed + round*config.n_ensemble + ensemble_idx)
 
                             if 'NOS' in config.algorithm.name and 'continuous' in config.model.name:
-                                #freeze the transformer weights
-                                for param in net.model.parameters():
-                                    param.requires_grad = False
 
                                 classifier = instantiate(config.problem.model, data_config=data_config, _recursive_=recursive)
                                 algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config)
                             elif 'NOS' in config.algorithm.name:
-                                pretrained_backbone = copy.deepcopy(net.model.backbone)
-                                # Remove the last layer for the classifier
-                                if hasattr(pretrained_backbone, 'output_layer'):  #DiT
-                                    delattr(pretrained_backbone, 'output_layer')
-                                #freeze backbone for NOS
-                                for param in pretrained_backbone.parameters():
-                                    param.requires_grad = False
 
                                 classifier = instantiate(config.problem.model, tokenizer=net.tokenizer, pretrained_backbone=pretrained_backbone, _recursive_=recursive)
                             else:
