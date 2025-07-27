@@ -287,6 +287,20 @@ def main(config):
                 summary_df = pd.concat([summary_df, new_dataset], axis=0)
                 summary_df.to_csv(summary_save_path, index=False)
 
+                #if NOS, delete the saved model directory to save space
+                if 'NOS' in config.algorithm.name:
+                    if os.path.exists(save_dir):
+                        for file in os.listdir(save_dir):
+                            file_path = os.path.join(save_dir, file)
+                            try:
+                                if os.path.isfile(file_path) or os.path.islink(file_path):
+                                    os.unlink(file_path)
+                                elif os.path.isdir(file_path):
+                                    os.rmdir(file_path)
+                            except Exception as e:
+                                print(f'Failed to delete {file_path}. Reason: {e}')
+                        os.rmdir(save_dir)
+
 
 if __name__ == "__main__":
     main()

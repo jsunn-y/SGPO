@@ -1,6 +1,7 @@
 ### Modified from https://github.com/kuleshov-group/discrete-diffusion-guidance/blob/main/classifier.py ###
 import itertools
 import typing
+import os
 
 import hydra.utils
 import lightning as L
@@ -362,6 +363,11 @@ def train_classifier(classifier, model, dataloader, train_config, save_dir=None,
       
   if train_config.wandb:
       wandb.finish()
+
+  # save model
+  if not os.path.exists(save_dir):
+      os.makedirs(save_dir)
+  torch.save(classifier, os.path.join(save_dir, f"classifier_{ensemble_idx}.pt"))
       
   return classifier
 

@@ -1,4 +1,4 @@
-for protein in GB1 #TrpB CreiLOV
+for protein in TrpB CreiLOV #GB1
 do  
     HYDRA_FULL_ERROR=1 CUDA_VISIBLE_DEVICES=1 python iterativeBO.py pretrained_ckpt=continuous/$protein data=$protein model=continuous problem=protein_NOS_continuous algorithm=NOS_continuous
 
