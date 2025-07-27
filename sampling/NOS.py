@@ -120,12 +120,14 @@ class NOS_C(Algo):
             x = torch.tensor(x) if isinstance(x, np.ndarray) else x
             x = self.project(x.to(device=self.device))
         else:
-            x = self.net.sample(
+            x = self.net.guided_sample(
                         infill_seed=infill_seed,
                         infill_mask=infill_mask,
                         corrupt_mask=corrupt_mask,
                         num_samples=num_samples,
-                    )
+                        classifier=None,  # <--- NEW: The classifier function/nn.Module
+                        guidance_scale=0.,
+                    ) #net.sample doesn't seem to work for some reason
             #convert to torch array of float
             x = torch.tensor(x, dtype=torch.float)
             

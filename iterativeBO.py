@@ -88,8 +88,8 @@ def main(config):
                     for param in net.model.parameters():
                         param.requires_grad = False
 
-                    classifier = instantiate(config.problem.model, data_config=data_config, _recursive_=recursive)
-                    algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config)
+                    #classifier = instantiate(config.problem.model, data_config=data_config, _recursive_=recursive)
+                    algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=None, data_config=data_config)
                     collate_fn = collate_fn_mapping['cls_guidance'](tokenizer=net.tokenizer)
                 elif 'NOS' in config.algorithm.name:
                     pretrained_backbone = copy.deepcopy(net.model.backbone)
@@ -100,8 +100,8 @@ def main(config):
                     for param in pretrained_backbone.parameters():
                         param.requires_grad = False
 
-                    classifier = instantiate(config.problem.model, tokenizer=net.tokenizer, pretrained_backbone=pretrained_backbone, _recursive_=recursive)
-                    algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config) 
+                    #classifier = instantiate(config.problem.model, tokenizer=net.tokenizer, pretrained_backbone=pretrained_backbone, _recursive_=recursive)
+                    algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=None, data_config=data_config) 
                     # algorithm = instantiate(config.algorithm.method, nos_stability_coef=0., n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config) #dummy to get the project_fn, replace later
                     collate_fn = collate_fn_mapping['cls_guidance'](tokenizer=net.tokenizer)
 
@@ -185,7 +185,8 @@ def main(config):
                             if 'NOS' in config.algorithm.name and 'continuous' in config.model.name:
 
                                 classifier = instantiate(config.problem.model, data_config=data_config, _recursive_=recursive)
-                                algorithm = instantiate(config.algorithm.method, nos_stability_coef=None, n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config)
+
+                                #algorithm = instantiate(config.algorithm.method, n_max_mutations=n_max_mutations, net=net, forward_op=classifier, data_config=data_config)
                             elif 'NOS' in config.algorithm.name:
 
                                 classifier = instantiate(config.problem.model, tokenizer=net.tokenizer, pretrained_backbone=pretrained_backbone, _recursive_=recursive)
@@ -230,6 +231,8 @@ def main(config):
                         net = instantiate(config.problem.train_function, net=net, train_loader=dataloader, train_config=config.problem.train)
                         #nets.append(net.to("cpu"))
                     guidance_param = config.problem.train.beta
+                else:
+                    raise NotImplementedError(f"Unknown algorithm {config.algorithm.name}.")
 
                 #generate samples with "thompson sampling" and steering/guidance
                 set_seed(config.seed + round)
@@ -237,7 +240,7 @@ def main(config):
                 with samples_pbar as pbar:
                     pbar.set_description(f"Sampling {config.num_samples} samples")
                     while n_total_new_samples < config.num_samples and iterations < max_iterations:
-                        if 'cls_guidance' in config.algorithm.name or 'DAPS' in config.algorithm.name:
+                        if 'cls_guidance' in config.algorithm.name or 'DAPS' in config.algorithm.name or 'NOS' in config.algorithm.name:
                             #if thompson sampling, random sample one model
                             if config.thompson_sampling:
                                 #GP
@@ -253,7 +256,7 @@ def main(config):
                             algorithm.update_model(classifier)
                     
                         #train model for each parameter for finetuning-based methods
-                        if 'DPO' in config.algorithm.name:
+                        elif 'DPO' in config.algorithm.name:
                             #if thompson sampling, random sample one model
                             if config.thompson_sampling:
                                 #net = nets[np.random.randint(0, config.n_ensemble)].to(device)
@@ -261,6 +264,8 @@ def main(config):
                             else:
                                 raise NotImplementedError("Only Thompson sampling is supported for now.")
                             algorithm.update_model(net)
+                        else:
+                            raise NotImplementedError(f"Unknown algorithm {config.algorithm.name}.")
                             
                         #Sample new sequences
                         print(f'Sampling for steered round with guidance parameter {guidance_param}.')

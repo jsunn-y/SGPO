@@ -11,5 +11,5 @@ method:
   _target_: sampling.NOS.NOS_C
   num_nos_steps: 10 #5, 10
   nos_step_size: 2. #0.1 #0.5-2 #try smaller here if it's unstable? #1 was unstable here #bug here because lowering it didn't change the results
-  nos_stability_coef: 200.
+  nos_stability_coef: 1000.
   n_max_mutations:
