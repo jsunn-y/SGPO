@@ -1,0 +1,1 @@
+To generate initial data for Bayesian optimization, prepare a csv of starting sequences (random mutations from the templates in our example), and calculate the oracle scores as shown in ```get_scores_helper.py```, and save to a csv file with the exact task as the filename. For example, the task ```mean``` corresponds to ```mean_scores.csv```.
