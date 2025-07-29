@@ -70,14 +70,12 @@ class Optimize(object):
         save_csv_frequency: int=1, #changed this to log more frequently
         k: int=1_000,
         verbose: bool=True,
-        repeat: int=0, # used to specify which set of initial sequences to use (which random trial)
         **kwargs,
     ):
 
         # add all local args to method args dict to be logged by wandb
         self.M = M
         self.tau = tau
-        self.repeat = repeat
         self.method_args = {}
         self.method_args['init'] = locals()
         del self.method_args['init']['self']
