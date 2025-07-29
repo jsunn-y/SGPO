@@ -16,8 +16,9 @@ except:
 
 import sys
 import os
+from Bio import SeqIO
 
-sys.path.append(os.path.abspath(os.path.join(__file__, "../../..")))
+sys.path.append("../../../")
 
 from oracle.inference_oracle import inference_oracle
 
@@ -153,14 +154,15 @@ class SGPOObjective(ObjectiveFunction):
         protein="TrpB",
     ):
         self.protein = protein
-        self.model_path = f"oracle/checkpoints/{protein}"
+        self.model_path = f"../../../oracle/checkpoints/{protein}"
+        self.full_seq = SeqIO.read(f"../../../data/{protein}/parent.fasta", "fasta").seq
 
         super().__init__()
 
 
     def query_black_box(self, x_list, impose_penalty=True):
 
-        _, scores = inference_oracle(x_list, self.protein, self.model_path, impose_penalty=impose_penalty)
+        _, scores = inference_oracle(x_list, self.protein, self.model_path, impose_penalty=impose_penalty, full_seq=self.full_seq)
 
         return scores.tolist()
 

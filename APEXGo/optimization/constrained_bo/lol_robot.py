@@ -95,8 +95,10 @@ class LolRobotState(RobotState):
         feasible_ys = out_dict['scores']
         feasible_cs=out_dict['constr_vals']
         feasible_searchspace_pts = out_dict['valid_zs']
+
         self.all_feasible_xs = self.all_feasible_xs + feasible_xs.tolist() 
-        self.all_feasible_cs = self.all_feasible_cs + feasible_cs.tolist()
+        if feasible_cs is not None:
+            self.all_feasible_cs = self.all_feasible_cs + feasible_cs.tolist()
 
         return feasible_ys, feasible_searchspace_pts, feasible_cs
 
@@ -188,12 +190,15 @@ class LolRobotState(RobotState):
             self.progress_fails_since_last_e2e += 1
             return None 
         
-        if c_next_ is not None:
+        if c_next_ is None:
+            valid_points = torch.tensor([True]*len(y_next_))
+        elif len(c_next_) == 0:
+            c_next_ = None
+            valid_points = torch.tensor([True]*len(y_next_))
+        else:
             if len(c_next_.shape) == 1:
                 c_next_ = c_next_.unsqueeze(-1)
             valid_points = torch.all(c_next_ <= 0, dim=-1) # all constraint values <= 0
-        else:
-            valid_points = torch.tensor([True]*len(y_next_))
 
         z_next_ = z_next_.detach().cpu() 
         if len(z_next_.shape) == 1:
@@ -233,6 +238,7 @@ class LolRobotState(RobotState):
         y_next_ = y_next_.unsqueeze(-1)
         if acquisition:
             pass # TODO: check if this is needed, state already updated during acquisition
+
         self.train_y = torch.cat((self.train_y, y_next_), dim=-2)
         self.train_z = torch.cat((self.train_z, z_next_), dim=-2)
         if c_next_ is not None:

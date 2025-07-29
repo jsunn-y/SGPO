@@ -12,6 +12,9 @@ data/mafft/mafft.sh
 data/mafft/temp.fasta
 data/mafft/temp_aligned.fasta
 
+APEXGo/optimization/constrained_bo_scripts/wandb
+APEXGo/optimization/constrained_bo_scripts/optimization_all_collected_data
+
 figures/
 checkpoints/
 exps/

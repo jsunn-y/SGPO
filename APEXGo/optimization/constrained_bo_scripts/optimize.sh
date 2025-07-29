@@ -1,0 +1,18 @@
+python apex_oracle_constrained_diverse_optimization.py \
+    --path_to_vae_statedict=/disk1/jyang4/repos/APEXGo/generation/saved_models/exalted-pine-5/exalted-pine-5_model_state_epoch_103.pkl \
+    --task_id=sgpo \
+    --divf_id=edit_dist \
+    --max_n_oracle_calls=800 \
+    --bsz=100 \
+    --track_with_wandb=True \
+    --constraint_function_ids=[] \
+    --constraint_thresholds=[] \
+    --constraint_types=[] \
+    --wandb_entity=jasonyang12345 \
+    --num_initialization_points=100 \
+    --dim=256 \
+    --max_string_length=400 \
+    --task_specific_args=[CreiLOV] \
+    --M=1 \
+    --tau=1 \
+    - run_robot - done

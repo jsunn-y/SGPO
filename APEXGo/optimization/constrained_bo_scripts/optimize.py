@@ -67,9 +67,10 @@ class Optimize(object):
         num_update_epochs: int=2,
         e2e_freq: int=10,
         print_freq: int=10,
-        save_csv_frequency: int=10,
+        save_csv_frequency: int=1, #changed this to log more frequently
         k: int=1_000,
         verbose: bool=True,
+        **kwargs,
     ):
 
         # add all local args to method args dict to be logged by wandb
@@ -98,12 +99,14 @@ class Optimize(object):
         if self.track_with_wandb:
             assert self.wandb_entity, "Must specify a valid wandb account username (wandb_entity) to run with wandb tracking"
 
+        # initialize latent space objective (self.objective) for particular task
+        self.initialize_objective()
+        
         # initialize train data for particular task
         #   must define self.init_train_x, self.init_train_y, and if latent obj, self.init_train_z
         self.load_train_data()
 
-        # initialize latent space objective (self.objective) for particular task
-        self.initialize_objective()
+        
         if isinstance(self.objective, LatentSpaceObjective): 
             # if we have a latent space objective, use periodic end-to-end updates with the VAE as in LOL-BO (LOL-ROBOT)
             self.lolrobot = True
@@ -235,6 +238,7 @@ class Optimize(object):
             df['train_y'] = self.robot_state.train_y.squeeze().detach().cpu().numpy() 
             df = pd.DataFrame.from_dict(df)
             df.to_csv(file_path, index=None)
+            print(f"Saved all collected data to {file_path}")
 
         return self
 

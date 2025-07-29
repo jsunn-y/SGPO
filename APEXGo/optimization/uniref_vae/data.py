@@ -34,7 +34,7 @@ class DatasetKmers(Dataset): # asssuming train data
         self.k = k 
         vocab_path = f"../uniref_vae/{k}mer_vocab.csv"
         if data_path is None: 
-            path_to_data = "../uniref_vae/uniref-small.csv"
+            path_to_data = "/disk1/jyang4/repos/APEXGo/generation/data/uniref-cropped.csv" #fix this later so not hard-coded
         if (vocab is None) and os.path.exists(vocab_path):
                 vocab = pd.read_csv(vocab_path, header=None ).values.squeeze().tolist() 
 

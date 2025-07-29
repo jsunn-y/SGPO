@@ -12,6 +12,7 @@ from constants import (
 )
 torch.set_num_threads(1)
 
+
 class APEXConstrainedDiverseOptimization(Optimize):
     """
     Run LOL-ROBOT Constrained Optimization using InfoTransformerVAE
@@ -42,7 +43,7 @@ class APEXConstrainedDiverseOptimization(Optimize):
         print("constraint_thresholds: ", constraint_thresholds)
         print("constraint_types: ", constraint_types)
 
-        self.score_version = task_specific_args[0]
+        self.protein = task_specific_args[0]
 
         assert len(constraint_function_ids) == len(constraint_thresholds)
         assert len(constraint_thresholds) == len(constraint_types)
@@ -68,13 +69,8 @@ class APEXConstrainedDiverseOptimization(Optimize):
             constraint_function_ids=self.constraint_function_ids, # list of strings identifying the black box constraint function to use
             constraint_thresholds=self.constraint_thresholds, # list of corresponding threshold values (floats)
             constraint_types=self.constraint_types, # list of strings giving correspoding type for each threshold ("min" or "max" allowed)
+            protein =self.protein, # protein name to be used in oracle inference
         )
-
-        # if train zs have not been pre-computed for particular vae, compute them 
-        #   by passing initialization selfies through vae 
-        if self.init_train_z is None:
-            self.init_train_z = self.compute_train_zs()
-        self.init_train_c = self.objective.compute_constraints(self.init_train_x)
 
         return self
 
@@ -99,7 +95,7 @@ class APEXConstrainedDiverseOptimization(Optimize):
 
         return init_zs
 
-    def load_train_data(self):
+    def load_train_data(self, filename_seqs="/disk1/jyang4/repos/APEXGo/generation/data/init_seqs.csv"):
         ''' Load in or randomly initialize self.num_initialization_points
             total initial data points to kick-off optimization 
             Must define the following:
@@ -107,18 +103,33 @@ class APEXConstrainedDiverseOptimization(Optimize):
                 self.init_train_y (a tensor of scores/y's)
                 self.init_train_z (a tensor of corresponding latent space points)
             '''
-        filename_seqs = f"../apex_oracle/init_data/init_seqs.csv"
-        df = pd.read_csv(filename_seqs, header=None)
-        train_x_seqs = df.values.squeeze().tolist()
-        filename_scores = f"../apex_oracle/init_data/{self.score_version}_scores.csv"
-        df = pd.read_csv(filename_scores, header=None)
-        train_y = torch.from_numpy(df.values).float()
         
+        #TODO: could replace tihs with pulling some random reconstructions
+        df = pd.read_csv(filename_seqs)
+        train_x_seqs = df["sequence"].values.tolist()
+
+        # Use oracle to get initial scores
         self.num_initialization_points = min(self.num_initialization_points, len(train_x_seqs))
         self.load_train_z()
         self.init_train_x = train_x_seqs[0:self.num_initialization_points]
-        train_y = train_y[0:self.num_initialization_points]
-        self.init_train_y = train_y #.unsqueeze(-1)
+        
+        # Initialize objective if not already done
+        if not hasattr(self, 'objective'):
+            self.initialize_objective()
+        
+        # Get scores from oracle
+        #print(self.init_train_x)
+        train_y = self.objective.objective_function(self.init_train_x)
+        self.init_train_y = torch.tensor(train_y).unsqueeze(-1)
+
+        #Moved this from initialize_objective
+        # if train zs have not been pre-computed for particular vae, compute them 
+        #   by passing initialization selfies through vae 
+        if self.init_train_z is None:
+            self.init_train_z = self.compute_train_zs()
+
+        self.init_train_c = self.objective.compute_constraints(self.init_train_x)
+
         return self 
     
     def load_train_z(

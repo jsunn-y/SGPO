@@ -385,7 +385,8 @@ class RobotState:
             # 4. update state of this tr only on the feasible ys it suggested
             # make sure feasible_ys and feasible_cs are tensors
             feasible_ys = torch.tensor(feasible_ys).float()
-            feasible_cs = torch.tensor(feasible_cs).float()
+            if feasible_cs is not None:
+                feasible_cs = torch.tensor(feasible_cs).float()
             update_state(state, feasible_ys, feasible_cs)
 
 
@@ -444,6 +445,7 @@ class RobotState:
             # print(f"starting tr {counter}")
             # 1. Generate a batch of candidates in 
             #   trust region using global surrogate model
+
             x_next = self.generate_batch_single_tr(state)
             # print(f"generated batch {counter} in {time.time() - current_time}")
             current_time = time.time()

@@ -15,6 +15,8 @@ from constants import (
     ALL_AMINO_ACIDS
 )
 import math 
+import os
+from Bio import SeqIO
 
 class ApexConstrainedDiverseObjective(LatentSpaceObjective):
     '''Objective class supports all optimization tasks using the 
@@ -35,6 +37,7 @@ class ApexConstrainedDiverseObjective(LatentSpaceObjective):
         constraint_function_ids=[], # list of strings identifying the black box constraint function to use
         constraint_thresholds=[], # list of corresponding threshold values (floats)
         constraint_types=[], # list of strings giving correspoding type for each threshold ("min" or "max" allowed)
+        protein = "TrpB", # protein name to be used in oracle inference
     ):
         self.dim                    = dim # SELFIES VAE DEFAULT LATENT SPACE DIM
         self.path_to_vae_statedict  = path_to_vae_statedict # path to trained vae stat dict
@@ -43,6 +46,8 @@ class ApexConstrainedDiverseObjective(LatentSpaceObjective):
         self.divf_id                = divf_id # specify which diversity function to use with string id 
         assert task_id in OBJECTIVE_FUNCTIONS_DICT 
         self.objective_function = OBJECTIVE_FUNCTIONS_DICT[task_id](*self.task_specific_args)
+        self.protein = protein # protein name to be used in oracle inference
+        self.full_seq = SeqIO.read(f"../../../data/{self.protein}/parent.fasta", "fasta").seq
 
         self.constraint_functions       = []
         for ix, constraint_threshold in enumerate(constraint_thresholds):
@@ -79,6 +84,9 @@ class ApexConstrainedDiverseObjective(LatentSpaceObjective):
         sample = self.vae.sample(z=z.reshape(-1, 2, self.dim//2))
         # grab decoded aa strings
         decoded_seqs = [self.dataobj.decode(sample[i]) for i in range(sample.size(-2))]
+
+        #for now, align all sequences, not just ones with the correct length
+        decoded_seqs = self.align_sequences(decoded_seqs)
 
         # get rid of X's (deletion)
         temp = [] 
@@ -171,3 +179,30 @@ class ApexConstrainedDiverseObjective(LatentSpaceObjective):
             all_cvals.append(cvals)
 
         return torch.cat(all_cvals, -1)
+
+    def align_sequences(self, sequences):
+
+        os.makedirs("tmp", exist_ok=True)
+        with open(f"tmp/temp.fasta", "w") as f:
+            for i, seq in enumerate(sequences):
+                f.write(f">{i}\n")
+                f.write(f"{seq}\n")
+        os.system(f"mafft --quiet --add tmp/temp.fasta --keeplength ../../../data/{self.protein}/parent.fasta > tmp/aligned.fasta")
+
+        aligned = list(SeqIO.parse("tmp/aligned.fasta", "fasta"))
+        
+        #alternatively return parent seq repeated - might not be ideal if the entire mafft run failed, but this shows that the generations are not great
+        # if len(aligned) == 0:
+        #     aligned = len(sequences) * [self.full_seq]
+
+        #replace gaps with the parent sequence
+        for i, seq in enumerate(aligned):
+            for j, r in enumerate(seq):
+                if r == "-":
+                    #sample a random residue from aa_options
+                    # random_res = random.choice(aa_options)
+                    # aligned[i] = aligned[i][:j] + random_res + aligned[i][j+1:]
+                    aligned[i] = aligned[i][:j] + self.full_seq[j] + aligned[i][j+1:] #alteratively fill with WT
+        #convert to list of strings
+        aligned = [str(s.seq) for s in aligned][1:]
+        return aligned
