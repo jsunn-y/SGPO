@@ -70,12 +70,14 @@ class Optimize(object):
         save_csv_frequency: int=1, #changed this to log more frequently
         k: int=1_000,
         verbose: bool=True,
+        repeat: int=0, # used to specify which set of initial sequences to use (which random trial)
         **kwargs,
     ):
 
         # add all local args to method args dict to be logged by wandb
         self.M = M
         self.tau = tau
+        self.repeat = repeat
         self.method_args = {}
         self.method_args['init'] = locals()
         del self.method_args['init']['self']
@@ -229,14 +231,19 @@ class Optimize(object):
             self.tracker.log(dict_log)
 
         if self.step_num % self.save_csv_frequency == 0:
-            df = {} 
-            save_dir = 'optimization_all_collected_data/'
-            if not os.path.exists(save_dir):
-                os.mkdir(save_dir)
-            file_path = save_dir + self.wandb_project_name + '_' + wandb.run.name + '_all-data-collected.csv'
-            df['train_x'] = np.array(self.robot_state.train_x)
-            df['train_y'] = self.robot_state.train_y.squeeze().detach().cpu().numpy() 
-            df = pd.DataFrame.from_dict(df)
+            df = pd.DataFrame()
+            save_dir = f'../../../exps/protein/{self.protein}/vae/iterativeBO/APEXGO/'
+            #make directories hierarchically if they do not exist
+            os.makedirs(save_dir, exist_ok=True)
+
+            file_path = save_dir + f'BO_summary_repeat{self.repeat}.csv'
+
+            df['sequence'] = np.array(self.robot_state.train_x)
+            df['fitness'] = self.robot_state.train_y.squeeze().detach().cpu().numpy() 
+            #divide by 100 to get the round number
+            df['round'] = (df.index/100).astype(int)
+            df['repeat'] = self.repeat
+
             df.to_csv(file_path, index=None)
             print(f"Saved all collected data to {file_path}")
 

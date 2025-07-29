@@ -11,6 +11,7 @@ from constants import (
     PATH_TO_VAE_STATE_DICT,
 )
 torch.set_num_threads(1)
+from Bio import SeqIO
 
 
 class APEXConstrainedDiverseOptimization(Optimize):
@@ -20,7 +21,7 @@ class APEXConstrainedDiverseOptimization(Optimize):
     def __init__(
         self,
         dim: int=256, # SELFIES VAE DEFAULT LATENT SPACE DIM
-        path_to_vae_statedict: str=PATH_TO_VAE_STATE_DICT,
+        path_to_vae_statedict: str=None,
         max_string_length: int=50,
         task_specific_args: list=[], # list of additional args to be passed into objective funcion 
         constraint_function_ids: list=[], # list of strings identifying the black box constraint function to use
@@ -28,15 +29,19 @@ class APEXConstrainedDiverseOptimization(Optimize):
         constraint_types: list=[], # list of strings giving correspoding type for each threshold ("min" or "max" allowed)
         divf_id: str="edit_dist",
         # init_data_path: str=None,
+        repeat: int=0, # used to specify which set of initial sequences to use (which random trial)
         **kwargs,
     ):
         self.dim=dim
-        self.path_to_vae_statedict = path_to_vae_statedict
+        self.repeat = repeat
         self.max_string_length = max_string_length 
         self.task_specific_args = task_specific_args
+        self.protein = task_specific_args[0] # protein name to be used in oracle inference
         self.divf_id = divf_id
         # TODO: We currently are hard coding the init data path
         # self.init_data_path = init_data_path
+        
+        self.path_to_init_seqs = f"../../../exps/protein/{self.protein}/initial_sample_d3pm/unconstrained/"
 
         print("task_specific_args: ", task_specific_args)
         print("constraint_function_ids: ", constraint_function_ids)
@@ -44,6 +49,12 @@ class APEXConstrainedDiverseOptimization(Optimize):
         print("constraint_types: ", constraint_types)
 
         self.protein = task_specific_args[0]
+
+        if self.protein == "CreiLOV":
+            self.path_to_vae_statedict = "/disk1/jyang4/repos/APEXGo/generation/saved_models/exalted-pine-5/exalted-pine-5_model_state_epoch_205.pkl"
+        else:
+            raise ValueError(f"Unsupported protein: {self.protein}. Please specify a valid protein name.")
+
 
         assert len(constraint_function_ids) == len(constraint_thresholds)
         assert len(constraint_thresholds) == len(constraint_types)
@@ -95,7 +106,7 @@ class APEXConstrainedDiverseOptimization(Optimize):
 
         return init_zs
 
-    def load_train_data(self, filename_seqs="/disk1/jyang4/repos/APEXGo/generation/data/init_seqs.csv"):
+    def load_train_data(self):
         ''' Load in or randomly initialize self.num_initialization_points
             total initial data points to kick-off optimization 
             Must define the following:
@@ -104,9 +115,8 @@ class APEXConstrainedDiverseOptimization(Optimize):
                 self.init_train_z (a tensor of corresponding latent space points)
             '''
         
-        #TODO: could replace tihs with pulling some random reconstructions
-        df = pd.read_csv(filename_seqs)
-        train_x_seqs = df["sequence"].values.tolist()
+        #for now, use the first 100 sequences from the d3pm initial round
+        train_x_seqs = [str(record.seq) for record in SeqIO.parse(self.path_to_init_seqs + f"generated_{self.repeat}.fasta", "fasta")][:self.num_initialization_points]
 
         # Use oracle to get initial scores
         self.num_initialization_points = min(self.num_initialization_points, len(train_x_seqs))
