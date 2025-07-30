@@ -237,7 +237,7 @@ class Optimize(object):
             file_path = save_dir + f'BO_summary_repeat{self.repeat}.csv'
 
             df['sequence'] = np.array(self.robot_state.train_x)
-            df['fitness'] = self.robot_state.train_y.squeeze().detach().cpu().numpy() 
+            df['fitness'] = self.robot_state.train_y.squeeze().detach().cpu().numpy()
             #divide by 100 to get the round number
             df['round'] = (df.index/100).astype(int)
             df['repeat'] = self.repeat
