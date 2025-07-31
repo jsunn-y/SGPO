@@ -52,6 +52,10 @@ class APEXConstrainedDiverseOptimization(Optimize):
 
         if self.protein == "CreiLOV":
             self.path_to_vae_statedict = "/disk1/jyang4/repos/APEXGo/generation/saved_models/exalted-pine-5-CreiLOV/exalted-pine-5_model_state_epoch_241.pkl"
+        elif self.protein == "TrpB":
+            self.path_to_vae_statedict = "/disk1/jyang4/repos/APEXGo/generation/saved_models/dainty-dream-9-TrpB/dainty-dream-9_model_state_epoch_421.pkl"
+        elif self.protein == "GB1":
+            self.path_to_vae_statedict = "/disk1/jyang4/repos/APEXGo/generation/saved_models/absurd-cosmos-6-GB1/absurd-cosmos-6_model_state_epoch_391.pkl"
         else:
             raise ValueError(f"Unsupported protein: {self.protein}. Please specify a valid protein name.")
 

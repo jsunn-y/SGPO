@@ -205,4 +205,15 @@ class ApexConstrainedDiverseObjective(LatentSpaceObjective):
                     aligned[i] = aligned[i][:j] + self.full_seq[j] + aligned[i][j+1:] #alteratively fill with WT
         #convert to list of strings
         aligned = [str(s.seq) for s in aligned][1:]
+
+        if self.protein == "TrpB":
+            self.residues = [117, 118, 119, 162, 166, 182, 183, 184, 185, 186, 227, 228, 230, 231, 301]
+            #replace non-mutated residues with the parent sequence
+            for i, seq in enumerate(aligned):
+                seq = list(seq)
+                for j, r in enumerate(seq):
+                    if j not in self.residues:
+                        seq[j] = self.full_seq[j]
+                aligned[i] = ''.join(seq)
+
         return aligned

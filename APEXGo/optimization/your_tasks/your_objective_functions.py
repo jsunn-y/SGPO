@@ -161,6 +161,13 @@ class SGPOObjective(ObjectiveFunction):
 
 
     def query_black_box(self, x_list, impose_penalty=True):
+        if self.protein == "TrpB":
+            self.residues = [117, 118, 119, 162, 166, 182, 183, 184, 185, 186, 227, 228, 230, 231, 301]
+            #for every x in x_list, subsample only the residues that are mutated, using 0 indexing
+            for j, x in enumerate(x_list):
+                x = list(x)
+                x_subsample = [x[i-1] for i in self.residues]
+                x_list[j] = ''.join(x_subsample)
 
         _, scores = inference_oracle(x_list, self.protein, self.model_path, impose_penalty=impose_penalty, full_seq=self.full_seq)
 
