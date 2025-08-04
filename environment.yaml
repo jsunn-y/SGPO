@@ -1,9 +1,10 @@
-name: SGPO
+name: ProtCFG
 channels:
   - conda-forge
   - defaults
   - bioconda  # for mafft and mmseqs2
 dependencies:
+  - python=3.9
   - python=3.9
   - pytorch  # handled via conda for GPU compatibility if needed
   - lightning
