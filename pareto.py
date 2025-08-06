@@ -108,7 +108,7 @@ def main(config):
                 net = instantiate(config.model.model, load_ref_model=True, model_name=config.pretrained_ckpt, seq_len=seq_len, device=device) 
                 #initiate algo once, doesn't need to be changed for DPO
                 algorithm = instantiate(config.algorithm.method, net=net, data_config=data_config, n_max_mutations=n_max_mutations)
-                collate_fn = collate_fn_mapping['DPO'](tokenizer=net.tokenizer) #should probably add reverse=False here
+                collate_fn = collate_fn_mapping['DPO'](tokenizer=net.tokenizer) #should probably make sure reverse=False here
 
             #initialize data once for all guidance parameters
             print(f'Initializing data based on presampled sequences from fasta.')

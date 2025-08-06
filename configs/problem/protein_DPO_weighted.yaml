@@ -5,7 +5,7 @@ train:
   mode: weighted #ranked #weighted #paired currently not supported
   batch_size: 8 #batch size for training, used to work with much larger batch sizes (i.e. 15, but 4 is the max for the big model)
   #mostly from CONFIG in https://github.com/AI4PDLab/DPO_pLM/blob/main/DPO_pLM.py#L105
-  n_epochs: 50
+  n_epochs: 5
   beta: 2. #0.25 is better for CreiLOV #0.01 #seems to weight the strength of the value function, 0.01 in stocco et al. but bigger values seem to work better for our applicaiton
   seed: 42
   learning_rate: 1e-4 #1e-7 from stocco et al. #used to run this higher at like 1e-4?
