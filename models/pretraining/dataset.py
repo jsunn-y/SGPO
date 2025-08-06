@@ -59,7 +59,7 @@ def get_loaders(config):
         collater = ContinuousCollater(tokenizer=tokenizer, max_len=config.data.seq_len)
     elif "causal" in config.pretrain_model.name:
         tokenizer = get_tokenizer()
-        collater = CausalCollater(tokenizer=tokenizer) #max_len=config.data.seq_len
+        collater = CausalCollater(tokenizer=tokenizer, reverse=True) #max_len=config.data.seq_len
     elif "mdlm" in config.pretrain_model.name or "udlm" in config.pretrain_model.name:
         tokenizer = hydra.utils.instantiate(config.pretrain_model.model.tokenizer, sequences=True)
         collater = MDLMCollater(tokenizer=tokenizer)

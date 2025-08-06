@@ -469,7 +469,7 @@ class CausalCollater(object):
     Adapted from https://github.com/Profluent-Internships/ProCALM/blob/main/progen_conditional/data/prepare.py
     """
 
-    def __init__(self, tokenizer, reverse=True, paired_mode=False): # max_len
+    def __init__(self, tokenizer, reverse=False, paired_mode=False): # max_len
         """
         Args:
             tokenizer: A ProGen2 Tokenizer
