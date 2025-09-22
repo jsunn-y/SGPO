@@ -36,29 +36,29 @@ class DPOInpaint(Algo):
             os.system(f"mafft --quiet --add {sequences} --keeplength data/{self.name}/parent.fasta > tmp/aligned.fasta")
         else:
             #make tmp directory if it does not exist
-            os.makedirs("tmp", exist_ok=True)
-            with open(f"tmp/temp.fasta", "w") as f:
+            os.makedirs(f"tmp/{self.name}", exist_ok=True)
+            with open(f"tmp/{self.name}/temp.fasta", "w") as f:
                 for i, seq in enumerate(sequences):
                     f.write(f">{i}\n")
                     f.write(f"{seq}\n")
-            os.system(f"mafft --quiet --add tmp/temp.fasta --keeplength data/{self.name}/parent.fasta > tmp/aligned.fasta")
+            os.system(f"mafft --quiet --add tmp/{self.name}/temp.fasta --keeplength data/{self.name}/parent.fasta > tmp/{self.name}/aligned.fasta")
 
-        aligned = list(SeqIO.parse("tmp/aligned.fasta", "fasta"))
-        
+        aligned = list(SeqIO.parse(f"tmp/{self.name}/aligned.fasta", "fasta")) #cannot run two campaigns with the same protein name at the same time
+
         #alternatively return parent seq repeated - might not be ideal if the entire mafft run failed, but this shows that the generations are not great
         # if len(aligned) == 0:
         #     aligned = len(sequences) * [self.full_seq]
 
+        aligned = [str(s.seq) for s in aligned]
         #replace gaps with the parent sequence
         for i, seq in enumerate(aligned):
             for j, r in enumerate(seq):
                 if r == "-":
-                    #sample a random residue from aa_options
+                    # sample a random residue from aa_options
                     # random_res = random.choice(aa_options)
                     # aligned[i] = aligned[i][:j] + random_res + aligned[i][j+1:]
                     aligned[i] = aligned[i][:j] + self.full_seq[j] + aligned[i][j+1:] #alteratively fill with WT
-        #convert to list of strings
-        aligned = [str(s.seq) for s in aligned]
+            #convert to list of strings
 
         if self.n_residues > 4:
             if self.n_max_mutations is not None:

@@ -1,4 +1,4 @@
-for protein in TrpB CreiLOV
+for protein in TrpB CreiLOV GB1
 do  
 
     python sample.py pretrained_ckpt=continuous/$protein data=$protein model=continuous problem=protein

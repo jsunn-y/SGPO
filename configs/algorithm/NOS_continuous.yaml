@@ -1,6 +1,6 @@
 name: NOS
 time_conditioned: True
-guidance_params: [1., 10., 100, 200., 500.] #stability coeffs to iterate through for actual pareto runs
+guidance_params: [1., 10., 100, 200., 500.] #old stability coeffs to iterate through for pareto runs
 
 #only used for hyperparameter search
 nos_steps: [5, 10]

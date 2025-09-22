@@ -16,21 +16,23 @@ from dataset.protein import ProteinPredictorDataset
 
 device = 'cuda'
 # os.chdir('../')
-proteins = ["GB1"] #["TrpB", "CreiLOV"] #use the original ProGen2 model or the finetuned version
-priors = ["random", "target", "continuous", "d3pm_finetune", "mdlm", "causalLM_finetune"] 
-# priors = ["random", "continuous", "continuous_ESM_head", "d3pm_finetune", "udlm", "mdlm","causalLM_finetune"] # "mdlm_long", "mdlm_short",
+proteins =  ["TrpB", "CreiLOV"] #["GB1"] #use the original ProGen2 model or the finetuned version
+#priors = ["random", "target", "continuous", "d3pm_finetune", "mdlm", "causalLM_finetune"] 
+priors = ["random", "target", "continuous", "continuous_ESM", "d3pm", "d3pm_finetune", "udlm", "mdlm","causalLM_finetune"] # "mdlm_long", "mdlm_short",
 # problems = ["random", "protein_classifier_continuous", "protein_classifier", "protein_classifier", "protein_DPO"]
 tasks = ["unconstrained"] #constrained
 types = [False] #True #whether to use the finetuned progen model or not
 sample_batch_size = 50
 tqdm_iter = tqdm(range(len(priors) * len(tasks) * len(proteins) * len(types)), desc="Calculating perplexity")
 
+prefix = "exps/protein"
+
 for protein in proteins:
     df = pd.DataFrame(columns=['sequence', 'perplexity', 'prior', 'task', 'finetuned'])
 
     for use_finetuned in types: 
         if use_finetuned:
-            ckpt_file = f'checkpoints/causalLM_finetune/{protein}/best'
+            ckpt_file = f'{prefix}/checkpoints/causalLM_finetune/{protein}/best'
             model = ProGenForCausalLM.from_pretrained(ckpt_file)
             tokenizer = get_tokenizer()
         else:
@@ -50,7 +52,7 @@ for protein in proteins:
 
             for task in tasks:
                 if prior == "random":
-                    fasta_path = os.path.join("exps", "protein", protein, "baseline", task, "generated.fasta")
+                    fasta_path = os.path.join(prefix, "exps", protein, "baseline", task, "generated.fasta")
                 elif prior == "target":
                     fasta_path = os.path.join("data", f"{protein}/MSA_sample.fasta")
                 elif prior == "target_LM":
@@ -58,7 +60,7 @@ for protein in proteins:
                     fasta_path = os.path.join("data", f"{protein}/MSA_aligned_sample.fasta")
                 else:
                     # fasta_path = os.path.join("exps", "protein", protein, prior, "uncond", "generated.fasta")
-                    fasta_path = os.path.join("exps", "protein", protein, prior, "prior_sample", task, "generated.fasta")
+                    fasta_path = os.path.join(prefix, "exps", protein, prior, "prior_sample", task, "generated.fasta")
 
                 #use the same dataset as those used during guidance
                 #probably has some redundant y-value intialization but that's fast

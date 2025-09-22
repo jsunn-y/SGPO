@@ -33,7 +33,7 @@ train:
   ngpu: 1 #must agree with device
 
 data:
-  dataset_suffix: MSA_aligned
+  dataset_suffix: MSA #was MSA_aligned
   splits: [train, validation]
 
 # hydra:

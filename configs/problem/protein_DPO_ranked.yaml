@@ -1,8 +1,8 @@
-name: protein_DPO_weighted
+name: protein_DPO_ranked
 sample_batch_size: 50 #batch size for inference, can probably increase this for the smaller model and it will still fit on memory
 
 train:
-  mode: weighted #ranked #weighted #paired currently not supported
+  mode: ranked #ranked #weighted #paired currently not supported
   batch_size: 8 #batch size for training, used to work with much larger batch sizes (i.e. 15, but 4 is the max for the big model)
   #mostly from CONFIG in https://github.com/AI4PDLab/DPO_pLM/blob/main/DPO_pLM.py#L105
   n_epochs: 5

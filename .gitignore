@@ -15,6 +15,12 @@ data/mafft/temp_aligned.fasta
 APEXGo/optimization/constrained_bo_scripts/wandb
 APEXGo/optimization/constrained_bo_scripts/optimization_all_collected_data
 
+scripts/archived/
+data/hmmer/jackhmmer_GB1/
+data/CreiLOV/MSA_old.csv
+data/TrpB/MSA_old.csv
+data/hmmer/jackhmmer/
+
 figures/
 checkpoints/
 exps/

@@ -1,5 +1,5 @@
 name: DPO
-guidance_params: [0.02, 0.1, 0.5, 2, 4] #[0.25, 0.5, 1., 2., 4.] 
+guidance_params: [0.1, 0.2, 0.4, 0.6, 0.8] #the former works better with weighted [0.02, 0.1, 0.5, 2, 4] #[2., 4., 8., 16., 32.]  #[0.25, 0.5, 1., 2., 4.] 
 method:
   _target_: sampling.DPO.DPOInpaint
   temp: 1. #consider increasing temperature here for less repeats. Increasing actually has fewer?
