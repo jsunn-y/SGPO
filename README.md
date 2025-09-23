@@ -88,6 +88,8 @@ python pareto.py pretrained_ckpt={pretrain_model}/{data} data={data} model={mode
 
 Output will be saved under `exps`:
  - `summary.csv` with generated sequences and associated fitness values.
+
+Note: for NOS runs, if you would like to do a more extensive hyperparameter search, please use `pareto_NOS_hyperparameter.py` instead.
   
 ### Iterative Adaptive Optimization Experiment
 Using a fixed guidance strength, simulates batch "Bayesian optimization" over multiple rounds of guidance. An ensemble of value functions models is trained between each round, and "Thompson sampling" is used to select a value function for guiding each generated sampled. Commands are given in `scripts/run_iterative.sh`. Each command should take less than one hour on a single H100.
@@ -125,5 +127,6 @@ Generates random samples for downstream analysis.
 ```
 python baseline_sample.py
 ```
+
 
 
