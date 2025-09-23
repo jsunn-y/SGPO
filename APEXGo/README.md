@@ -18,9 +18,7 @@ bash generation/train.sh
 To check the qualty of generated sequences, use `generation/generation.ipynb` and `generation/generation.py`. The model checkpoints will be saved to `generation/saved_models`.
 
 ## Optimization with APEXGo:
-To run the APEXGo algorithm and save outputed sequences with associated fitness values:
-Customize `optimization/constrained_bo_scripts/optimize.sh` and run:
-
+To run the APEXGo algorithm and save outputed sequences with associated fitness values, customize `optimization/constrained_bo_scripts/optimize.sh` and run:
 ```
 bash optimization/constrained_bo_scripts/optimize.sh
 ```
