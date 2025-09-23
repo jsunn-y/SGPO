@@ -10,11 +10,11 @@ do
         --constraint_function_ids=[] \
         --constraint_thresholds=[] \
         --constraint_types=[] \
-        --wandb_entity=jasonyang12345 \
+        --wandb_entity=username \ #replace with your username
         --num_initialization_points=100 \
         --dim=256 \
         --max_string_length=400 \
-        --task_specific_args=[TrpB] \
+        --task_specific_args=[] \ #populate the list with the name of the protein - TrpB, CreiLOV, or GB1
         --M=1 \
         --tau=1 \
         --repeat=$i \

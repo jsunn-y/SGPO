@@ -19,6 +19,8 @@ APEXGo/generation/saved_models/
 APEXGo/generation/wandb/
 APEXGo/generation/checkpoints/
 APEXGo/generation/data/
+APEXGo/optimization/constrained_bo_scripts/wandb
+APEXGo/optimization/constrained_bo_scripts/tmp
 
 scripts/archived/
 data/hmmer/jackhmmer_GB1/

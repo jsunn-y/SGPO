@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=1 python train_vae.py \
+python train_vae.py \
     --lr 0.0002 \
     --batch_size 512 \
     --k 1 \
@@ -9,5 +9,5 @@ CUDA_VISIBLE_DEVICES=1 python train_vae.py \
     --decoder_dim_feedforward 256 \
     --encoder_num_layers 6 \
     --decoder_num_layers 6 \
-    --wandb_entity jasonyang12345 \
-    --load_ckpt /disk1/jyang4/repos/APEXGo/generation/saved_models/smart-lion-4-TrpB/smart-lion-4_model_state_epoch_121.pkl \
+    --wandb_entity {replace with username} \
+    --load_ckpt {replace with path to ckpt.pkl if continuing training} \
