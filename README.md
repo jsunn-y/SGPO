@@ -12,7 +12,7 @@ pip install flash-attn
 Processed MSA sequences (for training the prior) and fitness data (for guidance) for TrpB and CreiLOV are preloaded in this repo under `data`. Raw data, pretrained model checkpoints, and experimental outputs can be downloaded from [huggingface](https://huggingface.co/jsunn-y/SGPO).
 
 ## Code Organization:
-1. 'APEXGo/`: code for reproducing the APEXGo baseline for latent space BO, based on the [original repository](https://github.com/Yimeng-Zeng/APEXGo/tree/main).
+1. `APEXGo/`: code for reproducing the APEXGo baseline for latent space BO, based on the [original repository](https://github.com/Yimeng-Zeng/APEXGo/tree/main).
 2. `configs/`: hydra config files for running experiments
 3. `data/`: processed data files and code for data processing
 4. `dataset/`: dataset objects for training value functions used in guidance
@@ -125,4 +125,5 @@ Generates random samples for downstream analysis.
 ```
 python baseline_sample.py
 ```
+
 
