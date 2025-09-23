@@ -12,15 +12,16 @@ pip install flash-attn
 Processed MSA sequences (for training the prior) and fitness data (for guidance) for TrpB and CreiLOV are preloaded in this repo under `data`. Raw data, pretrained model checkpoints, and experimental outputs can be downloaded from [huggingface](https://huggingface.co/jsunn-y/SGPO).
 
 ## Code Organization:
-1. `configs/`: hydra config files for running experiments
-2. `data/`: processed data files and code for data processing
-3. `dataset/`: dataset objects for training value functions used in guidance
-4. `exps/`: outputs from experiments, mainly generated sequences and associated fitness values
-5. `models/`: diffusion models, denoising model architectures are provided in `models/pretraining/model/`
-6. `oracle/`: oracle checkpoints for evaluating "ground truth" fitness and code for training and running the oracle
-7. `sampling/`: code for sampling using various guidance algorithms
-8. `scripts/`: shell scripts for running many experiments at once
-9. `training/`: code for training the value functions used in guidance
+1. 'APEXGo/`: code for reproducing the APEXGo baseline for latent space BO, based on the [original repository](https://github.com/Yimeng-Zeng/APEXGo/tree/main).
+2. `configs/`: hydra config files for running experiments
+3. `data/`: processed data files and code for data processing
+4. `dataset/`: dataset objects for training value functions used in guidance
+5. `exps/`: outputs from experiments, mainly generated sequences and associated fitness values
+6. `models/`: diffusion models, denoising model architectures are provided in `models/pretraining/model/`
+7. `oracle/`: oracle checkpoints for evaluating "ground truth" fitness and code for training and running the oracle
+8. `sampling/`: code for sampling using various guidance algorithms
+9. `scripts/`: shell scripts for running many experiments at once
+10. `training/`: code for training the value functions used in guidance
 
 ## Model Pretraining:
 Pretrained models are available on [huggingface](https://huggingface.co/jsunn-y/SGPO) and can be copied over into `checkpoints`. Alternatively, commands used to run pretraining are provided in `scripts/run_pretraining.sh`. Pretraining should take less than 1 hour for each diffusion model and several hours for each language model on a single H100. 
@@ -124,3 +125,4 @@ Generates random samples for downstream analysis.
 ```
 python baseline_sample.py
 ```
+
