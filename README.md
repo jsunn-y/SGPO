@@ -61,7 +61,7 @@ Alternatively, sampling raw sequences with no post processing can be accomplishe
 
 ### Perplexity Calculation
 ```python perplexity_calculation.py```
-Calculates the perplexities of unconditionally generated sequences using ProGen2-base. Output will be saved to `exps/{data}/perplexity/perplexity.csv`.
+Calculates the perplexities of unconditionally generated sequences using ProGen2-base. Output will be saved to `exps/protein/{data}/perplexity/perplexity.csv`.
 
 ## Guided Sampling:
 
@@ -127,6 +127,7 @@ Generates random samples for downstream analysis.
 ```
 python baseline_sample.py
 ```
+
 
 
 
