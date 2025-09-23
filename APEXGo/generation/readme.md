@@ -1,3 +1,1 @@
-Instructions from the original repo:
-
-Training data for the APEXGo paper can be downloaded [from here](https://drive.google.com/file/d/1WZyR-UZ78jktdO-w2yeKEVT-Bgfe9QRo/view?usp=sharing). To train the model, place the downloaded csv into ```APEXGo/generation/data``` and run ```bash train.sh```. Each epoch takes around 10 minutes on a NVIDIA RTX A6000, the model used in the paper has been trained for 118 epochs in total. You should replace YOUR_WANDB_ENTITY with your wandb user id (free to use), the logs will be automatically uploaded to wandb and checkpoints will be saved locally in ```APEXGo/generation/saved_models```.
+The csv of protein sequences to train with, should be placed in a new folder called `data`.
