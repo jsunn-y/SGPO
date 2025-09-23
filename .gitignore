@@ -15,6 +15,11 @@ data/mafft/temp_aligned.fasta
 APEXGo/optimization/constrained_bo_scripts/wandb
 APEXGo/optimization/constrained_bo_scripts/optimization_all_collected_data
 
+APEXGo/generation/saved_models/
+APEXGo/generation/wandb/
+APEXGo/generation/checkpoints/
+APEXGo/generation/data/
+
 scripts/archived/
 data/hmmer/jackhmmer_GB1/
 data/CreiLOV/MSA_old.csv
