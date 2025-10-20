@@ -15,7 +15,7 @@ To run VAE training, replace `generation/data/uniref-cropped.csv` with the seque
 ```
 bash generation/train.sh
 ```
-To check the qualty of generated sequences, use `generation/generation.ipynb` and `generation/generation.py`. The model checkpoints will be saved to `generation/saved_models`.
+To check the qualty of generated sequences, use `generation/generation.ipynb` and `generation/generation.py`. The model checkpoints will be saved to `generation/saved_models`. Pretained model checkpoints are available on [huggingface](https://huggingface.co/jsunn-y/SGPO).
 
 ## Optimization with APEXGo:
 To run the APEXGo algorithm and save outputed sequences with associated fitness values, customize `optimization/constrained_bo_scripts/optimize.sh` and run:
