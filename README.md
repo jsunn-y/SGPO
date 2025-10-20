@@ -31,7 +31,7 @@ Example command:
 python pretrain.py pretrain_model={pretrain_model} data={data}
 ```
 - pretrain_model = `continuous`, `continuous_ESM`, `d3pm`, `d3pm_finetune`, `udlm`, `mdlm`, `causalLM_finetune`
-- data = `TrpB`, `CreiLOV`
+- data = `TrpB`, `CreiLOV`, `GB1`
 
 ## Unconditional Sampling:
 Commands to sample unconditionally from a pretrained prior without guidance are provided in `scripts/run_prior_sample.sh`. These samples are only mutated at the positions under study in the case of TrpB. Each command should take minutes on a single H100.
@@ -40,7 +40,7 @@ Example command:
 ```
 python prior_sample.py pretrained_ckpt={pretrain_model}/{data} data={data} model={model}
 ```
-- data = `TrpB`, `CreiLOV`
+- data = `TrpB`, `CreiLOV`, `GB1`
   
 Supported prior models:
 | Model| `pretrain_model` (checkpoint name) | `model` (prior model type) | 
@@ -127,6 +127,7 @@ Generates random samples for downstream analysis.
 ```
 python baseline_sample.py
 ```
+
 
 
 
